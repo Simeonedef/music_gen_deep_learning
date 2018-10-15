@@ -1,1 +1,1 @@
-# music_gen_deep_learning
+# Music generation using deep learning
