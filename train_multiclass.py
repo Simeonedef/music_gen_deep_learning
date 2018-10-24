@@ -1,7 +1,7 @@
 from music21 import *
 import glob
+import pickle
 import numpy
-from numpy import *
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Dropout
@@ -23,7 +23,7 @@ test = []
 multiple_output = True
 
 offset = True
-rest = True
+rest = False
 offset_normalization = True
 offset_rounding = 2
 
@@ -60,7 +60,7 @@ for file in glob.glob("midi/*.mid"):
                 temp += "_" + str(element.pitch)
             elif isinstance(element, chord.Chord):
                 temp += "_" + '.'.join(str(n) for n in element.normalOrder)
-            elif isinstance(element, note.Rest):
+            elif isinstance(element, note.Rest) and rest:
                 temp += "_" + "rest"
             previous_offset_temp = element.offset
         else:
@@ -94,7 +94,7 @@ for file in glob.glob("midi/*.mid"):
             notes.append('.'.join(str(n) for n in element.normalOrder))
             current_offset = element.offset
             offsets.append(current_offset)
-        elif isinstance(element, note.Rest) and rest == 1:
+        elif isinstance(element, note.Rest) and rest:
             if offset:
                 current_offset = element.offset
                 if offset_normalization:
@@ -107,6 +107,9 @@ for file in glob.glob("midi/*.mid"):
             notes.append("rest")
             current_offset = element.offset
             offsets.append(current_offset)
+
+with open('data/notes', 'wb') as filepath:
+    pickle.dump(test, filepath)
 
 # for note in notes:
 #     print(note)
