@@ -45,8 +45,8 @@ python generate_GUI.py
 
 ## Going forward
 Below is a list of a few more things I would like to implement in this project:
-* finishing up train_output.py and getting a set of weights to generate music with multiple notes playing at once
-* making multiple set of weights for different genres of music
-* implementing an option to generate fully random music
-* turning it into a web app to be accessible from everywhere
-* have music simultaneously generated and played
+* [ ] finishing up train_output.py and getting a set of weights to generate music with multiple notes playing at once
+* [ ] making multiple set of weights for different genres of music
+* [x] implementing an option to generate fully random music 
+* [ ] turning it into a web app to be accessible from everywhere
+* [ ] have music simultaneously generated and played
