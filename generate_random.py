@@ -2,7 +2,8 @@ import pickle
 import random
 from music21 import instrument, note, stream, chord
 
-def generate():
+
+def generate_random():
     # load the notes used to train the model
     print("Loading the notes used to train the model")
     with open('data/notes', 'rb') as filepath:
@@ -14,12 +15,12 @@ def generate():
     n_vocab = len(set(notes))
 
     print("Generating notes")
-    prediction_output = generate_notes(pitchnames, n_vocab)
+    prediction_output = generate_notes_random(pitchnames, n_vocab)
     print("Creating midi file")
     create_midi(prediction_output)
 
 
-def generate_notes(pitchnames, n_vocab):
+def generate_notes_random(pitchnames, n_vocab):
     # pick a random sequence from the input as a starting point for the prediction
 
     int_to_note = dict((number, note) for number, note in enumerate(pitchnames))
@@ -75,4 +76,4 @@ def create_midi(prediction_output):
 
 
 if __name__ == '__main__':
-    generate()
+    generate_random()

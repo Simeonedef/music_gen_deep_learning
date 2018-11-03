@@ -1,6 +1,7 @@
 # coding=utf-8
 
 import pickle
+import random
 import numpy
 from music21 import instrument, note, stream, chord
 from keras.models import Sequential
@@ -68,6 +69,7 @@ dt = 1 / FPS
 
 # Global variables
 HAS_BEEN_GEN = False
+HAS_BEEN_GEN_RAND = False
 
 
 # -----------------------------------------------------------------------------
@@ -165,6 +167,39 @@ def generate_notes(model, network_input, pitchnames, n_vocab):
     return prediction_output
 
 
+def generate_random():
+    # load the notes used to train the model
+    print("Loading the notes used to train the model")
+    with open('data/notes', 'rb') as filepath:
+        notes = pickle.load(filepath)
+
+    # Get all pitch names
+    pitchnames = sorted(set(item for item in notes))
+    # Get all pitch names
+    n_vocab = len(set(notes))
+
+    print("Generating notes")
+    prediction_output = generate_notes_random(pitchnames, n_vocab)
+    print("Creating midi file")
+    create_midi(prediction_output)
+
+
+def generate_notes_random(pitchnames, n_vocab):
+    # pick a random sequence from the input as a starting point for the prediction
+
+    int_to_note = dict((number, note) for number, note in enumerate(pitchnames))
+
+    prediction_output = []
+
+    # generate 500 notes
+    for note_index in range(500):
+        index = random.randrange(0, n_vocab-1, 1)
+        result = int_to_note[index]
+        prediction_output.append(result)
+
+    return prediction_output
+
+
 def create_midi(prediction_output):
     offset = 0
     output_notes = []
@@ -207,22 +242,10 @@ def create_midi(prediction_output):
 # -----------------------------------------------------------------------------
 
 def random_color():
-    """
-    Return random color.
-
-    :return: Color tuple
-    """
     return randrange(0, 255), randrange(0, 255), randrange(0, 255)
 
 
 def play_function(font):
-    """
-    Main game function
-
-    :param difficulty: Difficulty of the game
-    :param font: Pygame font
-    :return: None
-    """
 
     f = font.render('Generating music', 1, COLOR_WHITE)
 
@@ -246,6 +269,32 @@ def play_function(font):
     HAS_BEEN_GEN = True
 
     play_menu.enable()
+
+
+def play_random_function(font):
+    f = font.render('Generating random music', 1, COLOR_WHITE)
+
+    # Draw random color and text
+    bg_color = random_color()
+    f_width = f.get_size()[0]
+
+    # Reset main menu and disable
+    # You also can set another menu, like a 'pause menu', or just use the same
+    # main_menu as the menu that will check all your input.
+    main_menu.disable()
+
+    # Continue playing
+    surface.fill(bg_color)
+    surface.blit(f, ((WINDOW_SIZE[0] - f_width) / 2, WINDOW_SIZE[1] / 2))
+    pygame.display.flip()
+
+    generate_random()
+
+    global HAS_BEEN_GEN_RAND
+    HAS_BEEN_GEN_RAND = True
+
+    play_menu.enable()
+
 
 def music_function(font):
     if HAS_BEEN_GEN:
@@ -341,12 +390,102 @@ def music_function(font):
 
         play_menu.enable()
 
-def main_background():
-    """
-    Function used by menus, draw on background while menu is active.
 
-    :return: None
-    """
+def music_random_function(font):
+    if HAS_BEEN_GEN_RAND:
+        f = font.render('Playing music', 2, COLOR_WHITE)
+        help_text = font.render('Press esc to stop playing and go back', 1, COLOR_WHITE)
+        # help_text2 = font.render('Press space to pause/unpause', 1, COLOR_WHITE)
+
+        # Draw random color and text
+        bg_color = random_color()
+        f_width = f.get_size()[0]
+        help_width = help_text.get_size()[0]
+        # help2_width = help_text2.get_size()[0]
+        f_height = f.get_size()[1]
+
+        # Reset main menu and disable
+        # You also can set another menu, like a 'pause menu', or just use the same
+        # main_menu as the menu that will check all your input.
+        main_menu.disable()
+
+        # Continue playing
+        surface.fill(bg_color)
+        surface.blit(f, ((WINDOW_SIZE[0] - f_width) / 2, WINDOW_SIZE[1] / 2))
+        surface.blit(help_text, ((WINDOW_SIZE[0] - help_width) / 2, (WINDOW_SIZE[1] / 2) + f_height + 2))
+        # surface.blit(help_text2, ((WINDOW_SIZE[0] - help2_width) / 2, (WINDOW_SIZE[1] / 2) + 2*f_height + 4))
+        pygame.display.flip()
+
+        pygame.mixer.music.load('test_output_random.mid')
+        pygame.mixer.music.play(1)
+
+        # playing = True
+
+        while True:
+            # Application events
+            playevents = pygame.event.get()
+            for e in playevents:
+                if e.type == QUIT:
+                    exit()
+                elif e.type == KEYDOWN:
+                    if e.key == K_ESCAPE and main_menu.is_disabled():
+                        pygame.mixer.music.stop()
+                        main_menu.enable()
+                        # Quit this function, then skip to loop of main-menu on line 217
+                        return
+                    # elif e.key == K_SPACE:
+                    #     print("Trying to pause")
+                    #     if playing:
+                    #         print("Music is currently playing")
+                    #         global current_pos
+                    #         current_pos = pygame.mixer.music.get_pos()
+                    #         print(current_pos)
+                    #         pygame.mixer.music.stop()
+                    #         playing = False
+                    #     else:
+                    #         print("No music playing")
+                    #         print(current_pos)
+                    #         pygame.mixer.music.set_pos(current_pos)
+                    #         # pygame.mixer.music.play(0)
+                    #         playing = True
+
+            # Pass events to main_menu
+            main_menu.mainloop(playevents)
+
+        play_menu.enable()
+    else:
+        f = font.render('You need to generate some random music first!', 1, COLOR_WHITE)
+        help_text = font.render('Press any key to go back', 1, COLOR_WHITE)
+
+        # Draw random color and text
+        bg_color = random_color()
+        f_width = f.get_size()[0]
+
+        # Reset main menu and disable
+        # You also can set another menu, like a 'pause menu', or just use the same
+        # main_menu as the menu that will check all your input.
+        main_menu.disable()
+
+        # Continue playing
+        surface.fill(bg_color)
+        surface.blit(f, ((WINDOW_SIZE[0] - f_width) / 2, WINDOW_SIZE[1] / 2))
+        surface.blit(help_text, ((WINDOW_SIZE[0] - f_width) / 2, WINDOW_SIZE[1] / 2 - f_width))
+        pygame.display.flip()
+
+        while True:
+            # Application events
+            playevents = pygame.event.get()
+            for e in playevents:
+                if e.type == KEYDOWN:
+                    main_menu.enable()
+                    return
+
+            # Pass events to main_menu
+            main_menu.mainloop(playevents)
+
+        random_menu.enable()
+
+def main_background():
     surface.fill(COLOR_BACKGROUND)
 
 
@@ -377,6 +516,33 @@ play_menu.add_option('Play music', music_function,
                      pygame.font.Font(pygameMenu.fonts.FONT_FRANCHISE, 30))
 
 play_menu.add_option('Return to main menu', PYGAME_MENU_BACK)
+
+
+random_menu = pygameMenu.Menu(surface,
+                              bgfun=main_background,
+                              color_selected=COLOR_SELECTED,
+                              font=pygameMenu.fonts.FONT_BEBAS,
+                              font_color=COLOR_BLACK,
+                              font_size=30,
+                              menu_alpha=100,
+                              menu_color=MENU_BACKGROUND_COLOR,
+                              menu_color_title=COLOR_TITLE,
+                              menu_height=int(WINDOW_SIZE[1]),
+                              menu_width=int(WINDOW_SIZE[0]),
+                              onclose=PYGAME_MENU_DISABLE_CLOSE,
+                              option_shadow=False,
+                              title='Random Music menu',
+                              window_height=WINDOW_SIZE[1],
+                              window_width=WINDOW_SIZE[0]
+                              )
+
+random_menu.add_option('Generate music', play_random_function,
+                       pygame.font.Font(pygameMenu.fonts.FONT_FRANCHISE, 30))
+
+random_menu.add_option('Play music', music_random_function,
+                       pygame.font.Font(pygameMenu.fonts.FONT_FRANCHISE, 30))
+
+random_menu.add_option('Return to main menu', PYGAME_MENU_BACK)
 
 # ABOUT MENU
 about_menu = pygameMenu.TextMenu(surface,
@@ -422,6 +588,7 @@ main_menu = pygameMenu.Menu(surface,
                             window_width=WINDOW_SIZE[0]
                             )
 main_menu.add_option('Music', play_menu)
+main_menu.add_option('Random', random_menu)
 main_menu.add_option('About', about_menu)
 main_menu.add_option('Quit', PYGAME_MENU_EXIT)
 
