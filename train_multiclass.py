@@ -9,7 +9,6 @@ from keras.layers import LSTM
 from keras.layers import Activation
 from keras.utils import np_utils
 from keras.callbacks import ModelCheckpoint
-from sklearn.preprocessing import MultiLabelBinarizer
 
 notes_to_parse = None
 
@@ -39,13 +38,13 @@ for file in glob.glob("midi/*.mid"):
     try:  # file has instrument parts
         inst = instrument.partitionByInstrument(midi)
         print("Number of instrument parts: " + str(len(inst.parts)))
-        highest_offset = inst.parts[0].highestOffset
+        # highest_offset = inst.parts[0].highestOffset
         notes_to_parse = inst.parts[0].recurse()
     except:  # file has notes in a flat structure
         notes_to_parse = midi.flat.notes
-        highest_offset = midi.flat.highestOffset
+        # highest_offset = midi.flat.highestOffset
 
-    print("Highest offset: %f" % highest_offset)
+    # print("Highest offset: %f" % highest_offset)
 
     previous_offset_temp = 0.0
     temp = ""
@@ -67,48 +66,48 @@ for file in glob.glob("midi/*.mid"):
             test.append(temp)
             previous_offset_temp = element.offset
 
-        if isinstance(element, note.Note):
-            if offset:
-                current_offset = element.offset
-                if offset_normalization:
-                    current_offset = element.offset / highest_offset
-                    current_offset = round(current_offset, offset_rounding)
-                pitches.append(str(element.pitch) + "_" + str(current_offset))
-            else:
-                pitches.append(str(element.pitch))
+        # if isinstance(element, note.Note):
+        #     if offset:
+        #         current_offset = element.offset
+        #         if offset_normalization:
+        #             current_offset = element.offset / highest_offset
+        #             current_offset = round(current_offset, offset_rounding)
+        #         pitches.append(str(element.pitch) + "_" + str(current_offset))
+        #     else:
+        #         pitches.append(str(element.pitch))
+        #
+        #     notes.append(str(element.pitch))
+        #     current_offset = element.offset
+        #     offsets.append(current_offset)
+        # elif isinstance(element, chord.Chord):
+        #     if offset:
+        #         current_offset = element.offset
+        #         if offset_normalization:
+        #             current_offset = element.offset / highest_offset
+        #             current_offset = round(current_offset, offset_rounding)
+        #         pitches.append('.'.join(str(n) for n in element.normalOrder))
+        #         pitches.append("_" + str(current_offset))
+        #     else:
+        #         pitches.append('.'.join(str(n) for n in element.normalOrder))
+        #
+        #     notes.append('.'.join(str(n) for n in element.normalOrder))
+        #     current_offset = element.offset
+        #     offsets.append(current_offset)
+        # elif isinstance(element, note.Rest) and rest:
+        #     if offset:
+        #         current_offset = element.offset
+        #         if offset_normalization:
+        #             current_offset = element.offset / highest_offset
+        #             current_offset = round(current_offset, offset_rounding)
+        #         pitches.append("rest_" + str(current_offset))
+        #     else:
+        #         pitches.append("rest")
+        #
+        #     notes.append("rest")
+        #     current_offset = element.offset
+        #     offsets.append(current_offset)
 
-            notes.append(str(element.pitch))
-            current_offset = element.offset
-            offsets.append(current_offset)
-        elif isinstance(element, chord.Chord):
-            if offset:
-                current_offset = element.offset
-                if offset_normalization:
-                    current_offset = element.offset / highest_offset
-                    current_offset = round(current_offset, offset_rounding)
-                pitches.append('.'.join(str(n) for n in element.normalOrder))
-                pitches.append("_" + str(current_offset))
-            else:
-                pitches.append('.'.join(str(n) for n in element.normalOrder))
-
-            notes.append('.'.join(str(n) for n in element.normalOrder))
-            current_offset = element.offset
-            offsets.append(current_offset)
-        elif isinstance(element, note.Rest) and rest:
-            if offset:
-                current_offset = element.offset
-                if offset_normalization:
-                    current_offset = element.offset / highest_offset
-                    current_offset = round(current_offset, offset_rounding)
-                pitches.append("rest_" + str(current_offset))
-            else:
-                pitches.append("rest")
-
-            notes.append("rest")
-            current_offset = element.offset
-            offsets.append(current_offset)
-
-with open('data/notes', 'wb') as filepath:
+with open('data/multi_notes', 'wb') as filepath:
     pickle.dump(test, filepath)
 
 # for note in notes:
@@ -123,43 +122,22 @@ print("Dictionary size: %f" % len(note_to_int))
 network_input = []
 network_output = []
 
-temp_in = []
-temp_out = []
-
 sequence_in = []
 sequence_out = []
 
 n_vocab = len(set(test))
 
-previous_offset = 0.0
-one_hot = MultiLabelBinarizer()
-
-print(len(test) - sequence_length)
-
 # create input sequences and the corresponding outputs
 print("Create input sequences and the corresponding outputs")
 for i in range(0, len(test) - sequence_length, 1):
     sequence_in = test[i:i + sequence_length]
-
-    # count = i + sequence_length
-    # previous_offset = offsets[count]
-    # while offsets[count] == previous_offset:
-    #     temp_out.append(notes[count])
-    #     previous_offset = offsets[count]
-    #     count += 1
-
-    # sequence_out.append(temp_out)
-
-    # one_hot.fit_transform(sequence_out)
-    # network_input.append(sequence_in)
-    # network_output.append(sequence_out)
-
     sequence_out = test[i + sequence_length]
     network_input.append([note_to_int[char] for char in sequence_in])
     network_output.append(note_to_int[sequence_out])
 
-    # print("outside of for loop", i)
 
+print(network_input)
+print(network_output)
 n_patterns = len(network_input)
 
 # reshape the input into a format compatible with LSTM layers
@@ -191,7 +169,7 @@ model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
 
 # Training model
 print("Training model")
-filepath = "weights-improvement-{epoch:02d}-{loss:.4f}-bigger.hdf5"
+filepath = "weights-improvement-multi-{epoch:02d}-{loss:.4f}-bigger.hdf5"
 checkpoint = ModelCheckpoint(
     filepath,
     monitor='loss',
