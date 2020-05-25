@@ -6,7 +6,7 @@ This was developped as part of my bachelor thesis at The University of Mancheste
 <div align="center"><a href="https://github.com/simeonedef"><img alt="@simeonedef" src="https://img.shields.io/badge/Author-Sim%C3%A9one%20de%20Fremond-lightgrey.svg" /></a>
 <a href="https://opensource.org/licenses/MIT/"><img alt="License MIT" src="https://img.shields.io/badge/license-MIT-blue" /></a>
 <a href="https://www.python.org/downloads/"><img alt="Python 3.6" src="https://img.shields.io/badge/python-3.6-green" /></a>
-<img alt="Release date: june" src="https://img.shields.io/badge/release%20date-june-brightgreen.svg" />
+<img alt="Release date: june 2019" src="https://img.shields.io/badge/release%20date-june%202019-brightgreen" />
 </div>
 
 ## Requirements
