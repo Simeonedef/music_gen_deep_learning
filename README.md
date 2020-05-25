@@ -38,7 +38,7 @@ python train_multiclass.py
 ```
 if you want to take into account multiple notes being played at once.
 
-Both training scripts will use every midi file in ./midi to train the network. Currently the directory contains all the pieces from Bach's Well-Tempered Clavier II.
+Both training scripts will use every midi file in ./midi to train the network. Currently the directory contains all the pieces from Bach's Well-Tempered Clavier II as well as some additional files that you can decide to use if you enable their usage in the train_single.py file.
 
 ### Generating music
 Once you have trained the network, you will have a set of weights which you can use instead of the weights.hdf5 file that comes in the repository. You can then generate using the trained network using generate.py like so:
