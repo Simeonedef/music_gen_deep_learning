@@ -21,7 +21,7 @@ More information in the requirements.txt file
 
 ## Setting up the project
 To install all the required packaged simply run from the project's root directory:
-````bash
+````sh
 pip install -r requirements.txt
 ````
 See next steps to run the model and generate some music!
@@ -29,11 +29,11 @@ See next steps to run the model and generate some music!
 ## Usage example
 ### Training the model
 You need to first train the model which you can do by running one of the training scripts like so:
-```bash
+```sh
 python train_single.py
 ```
 if you to have only a single class as output, which means only one note playing at a time; otherwise:
-```bash
+```sh
 python train_multiclass.py
 ```
 if you want to take into account multiple notes being played at once.
@@ -42,7 +42,7 @@ Both training scripts will use every midi file in ./midi to train the network. C
 
 ### Generating music
 Once you have trained the network, you will have a set of weights which you can use instead of the weights.hdf5 file that comes in the repository. You can then generate using the trained network using generate.py like so:
-```bash
+```sh
 python generate.py
 ```
 The output will be test_output.mid. There is already an included midi file as an example of what the network can generate.
@@ -56,5 +56,5 @@ python generate_GUI.py
 Below is a list of a few more things I would like to implement in this project:
 * [x] finishing up train_output.py and getting a set of weights to generate music with multiple notes playing at once (in another repo)
 * [ ] making multiple set of weights for different genres of music
-* [x] implementing an option to generate fully random music 
+* [x] implementing an option to generate fully random music
 * [x] turning it into a web app to be accessible from everywhere [Click here !](https://deepmusic.herokuapp.com/)
