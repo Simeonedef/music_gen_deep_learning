@@ -54,7 +54,7 @@ python generate_GUI.py
 
 ## Going forward
 Below is a list of a few more things I would like to implement in this project:
-* [x] finishing up train_output.py and getting a set of weights to generate music with multiple notes playing at once (in another repo)
+* [x] finishing up train_output.py and getting a set of weights to generate music with multiple notes playing at once (in another private repo)
 * [ ] making multiple set of weights for different genres of music
 * [x] implementing an option to generate fully random music
 * [x] turning it into a web app to be accessible from everywhere [Click here !](https://deepmusic.herokuapp.com/)
