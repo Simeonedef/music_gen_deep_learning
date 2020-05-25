@@ -1,0 +1,11 @@
+h5py==2.9.0
+Keras==2.2.4
+Keras-Applications==1.0.6
+Keras-Preprocessing==1.0.5
+matplotlib==3.1.2
+music21==5.5.0
+numpy==1.17.4
+pygame==1.9.4
+pygame-menu==1.96.1
+tensorboard==1.12.2
+tensorflow==1.12.0
