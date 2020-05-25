@@ -2,7 +2,7 @@
   Music Generation Using Deep Learning
 </h1>
 <p align="center">Sequence generation using LSTM <br>
-This is currently being developped as part of my third year project at the university of manchester</p>
+This was developped as part of my bachelor thesis at The University of Manchester</p>
 <div align="center"><a href="https://github.com/simeonedef"><img alt="@simeonedef" src="https://img.shields.io/badge/Author-Sim%C3%A9one%20de%20Fremond-lightgrey.svg" /></a>
 <a href="https://opensource.org/licenses/MIT/"><img alt="License MIT" src="https://img.shields.io/badge/license-MIT-blue" /></a>
 <a href="https://www.python.org/downloads/"><img alt="Python 3.6" src="https://img.shields.io/badge/python-3.6-green" /></a>
@@ -45,8 +45,7 @@ python generate_GUI.py
 
 ## Going forward
 Below is a list of a few more things I would like to implement in this project:
-* [ ] finishing up train_output.py and getting a set of weights to generate music with multiple notes playing at once
+* [x] finishing up train_output.py and getting a set of weights to generate music with multiple notes playing at once (in another repo)
 * [ ] making multiple set of weights for different genres of music
 * [x] implementing an option to generate fully random music 
-* [ ] turning it into a web app to be accessible from everywhere
-* [ ] have music simultaneously generated and played
+* [x] turning it into a web app to be accessible from everywhere (in another repo)
